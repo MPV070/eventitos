@@ -19,9 +19,12 @@
     />
     <link rel="stylesheet" href="./css/style.css" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body class="d-flex flex-column min-vh-100 bg-dark text-white text-center">
     <!-- HEADER -->
@@ -83,21 +86,15 @@
             <div class="form-group mb-3">
               <label for="evento-fecha">Fecha</label>
               <input type="date" class="form-control" id="evento-fecha" />
-              <small
-              id="fechaHelp"
-              class="form-text text-white"
-              >
-              La fecha debe ser mayor que el día de hoy.
+              <small id="fechaHelp" class="form-text text-white">
+                La fecha debe ser mayor que el día de hoy.
               </small>
             </div>
             <div class="form-group mb-3">
               <label for="evento-hora">Hora</label>
               <input type="time" class="form-control" id="evento-hora" />
-              <small
-              id="horaHelp"
-              class="form-text text-white"
-              >
-              Introduzca la hora del evento.
+              <small id="horaHelp" class="form-text text-white">
+                Introduzca la hora del evento.
               </small>
             </div>
             <div class="form-group mb-3">
@@ -151,9 +148,14 @@
           </form>
         </div>
       </div>
-      <div class="row mt-5 justify-content-center">
-        <div class="col-md-12">
-          <h2 class="mb-3">Eventos Registrados</h2>
+    </div>
+    <!-- FORM -->
+    <!-- DATA -->
+    <div id="datos" class="container fullsize d-none">
+      <div class="row justify-content-center">
+        <div>
+          <h1>Datos</h1>
+          <h3>Eventos</h3>
           <div class="form-group mb-3">
             <div class="input-group mb-3 justify-content-end">
               <input
@@ -168,100 +170,6 @@
               </span>
             </div>
           </div>
-          <table class="table table-dark text-center">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Lugar</th>
-                <th>Descripcion</th>
-                <th>Imagen</th>
-                
-              </tr>
-            </thead>
-            <tbody id="eventos-nombres-table-body">
-              <!-- Rows will be added dynamically -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="row justify-content-center d-none" id="participante-form-container">
-        <div class="col-md-6">
-          <h2 class="mb-3">Añadir Participante</h2>
-          <form
-            id="participante-form"
-            class="p-3 border rounded shadow-sm bg-dark text-white"
-          >
-            <div class="form-group mb-3">
-            <label for="participante-evento">Evento</label>
-            <select class="form-control" id="participante-evento" disabled>
-              
-              
-            </select>
-          </div>
-
-            <div class="form-group mb-3">
-              <label for="participante-nombre">Nombre</label>
-              <input
-                type="text"
-                class="form-control"
-                id="participante-nombre"
-                placeholder="Nombre"
-              />
-            </div>
-            <div class="form-group mb-3">
-              <label for="participante-correo">Correo Electrónico</label>
-              <input
-                type="email"
-                class="form-control"
-                id="participante-correo"
-                placeholder="Correo Electrónico"
-              />
-              <small id="emailHelp" class="form-text text-white">
-                El correo debe ser válido.
-              </small>
-            </div>
-            <div class="form-group mb-3">
-              <label for="participante-fecha">Fecha de Inscripción</label>
-              <input type="date" class="form-control" id="participante-fecha" />
-            </div>
-            <div class="form-group mb-3">
-              <label for="participante-acompanantes"
-                >Número de Acompañantes</label
-              >
-              <input
-                type="number"
-                class="form-control"
-                id="participante-acompanantes"
-                placeholder="Número de Acompañantes"
-              />
-            </div>
-            
-            <div class="d-flex justify-content-between">
-              <button
-                type="button"
-                class="btn btn-primary"
-                onclick="addParticipante()"
-                disabled
-              >
-                Añadir Participante
-              </button>
-              <a href="#" class="btn btn-link" onclick="resetParticipanteForm()"
-                ><i class="bi bi-arrow-counterclockwise"></i> Resetear</a
-              >
-            </div>
-          </form>
-        </div>
-      </div>
-      <!-- FORM -->
-      <!-- DATA -->
-    </div>
-    <div id="datos" class="container fullsize d-none">
-      <div class="row justify-content-center">
-        <div>
-          <h1>Datos</h1>
-          <h3>Eventos</h3>
           <table class="table table-dark text-center">
             <thead>
               <tr>
@@ -288,6 +196,7 @@
                 <th>Número de Acompañantes</th>
                 <th>Fecha de Inscripción</th>
                 <th>Evento</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody id="participantes-table-body">
@@ -297,15 +206,94 @@
         </div>
       </div>
     </div>
-    <!-- DATOS -->
+    <!-- DATA -->
+
+    <!-- Add Participante Modal -->
+    <div
+      class="modal fade"
+      id="addParticipanteModal"
+      tabindex="-1"
+      aria-labelledby="addParticipanteModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+          <form id="participante-form">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addParticipanteModalLabel">
+                Añadir Participante
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group mb-3">
+                <label for="add-participante-evento">Evento</label>
+                <select class="form-control" id="add-participante-evento" disabled></select>
+              </div>
+              <div class="form-group mb-3">
+                <label for="participante-nombre">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="participante-nombre"
+                  placeholder="Nombre"
+                />
+              </div>
+              <div class="form-group mb-3">
+                <label for="participante-correo">Correo Electrónico</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="participante-correo"
+                  placeholder="Correo Electrónico"
+                />
+                <small id="emailHelp" class="form-text text-white">
+                  El correo debe ser válido.
+                </small>
+              </div>
+              <div class="form-group mb-3">
+                <label for="participante-fecha">Fecha de Inscripción</label>
+                <input type="date" class="form-control" id="participante-fecha" />
+              </div>
+              <div class="form-group mb-3">
+                <label for="participante-acompanantes">Número de Acompañantes</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="participante-acompanantes"
+                  placeholder="Número de Acompañantes"
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancelar
+              </button>
+              <button type="button" class="btn btn-primary" onclick="addParticipante()" disabled>
+                Añadir Participante
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Add Participante Modal -->
+
     <!-- FOOTER -->
     <footer class="mt-auto bg-dark text-center text-white">
       <!-- Grid container -->
       <div class="container p-4 pb-0">
         <!-- Section: Social media -->
         <section class="mb-4">
-          
-
           <!-- Google -->
           <a
             class="btn btn-primary btn-floating m-1"
@@ -315,7 +303,6 @@
             ><i class="fab fa-google"></i
           ></a>
 
-          
           <!-- Github -->
           <a
             class="btn btn-primary btn-floating m-1"
@@ -332,7 +319,6 @@
       <!-- Copyright -->
       <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
         © 2025 María Pérez
-        
       </div>
       <!-- Copyright -->
     </footer>
@@ -367,7 +353,7 @@
               type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal"
-            >
+            ></button>
               Cancelar
             </button>
             <button type="button" class="btn btn-primary" id="modal-confirm">
@@ -380,54 +366,201 @@
     <!-- Modal -->
 
     <!-- Edit Evento Modal -->
-    <div class="modal fade" id="editEventoModal" tabindex="-1" aria-labelledby="editEventoModalLabel" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="editEventoModal"
+      tabindex="-1"
+      aria-labelledby="editEventoModalLabel"
+      aria-hidden="true"
+    >
       <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content bg-dark text-white">
           <form id="edit-evento-form">
             <div class="modal-header">
-              <h5 class="modal-title" id="editEventoModalLabel">Editar Evento</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h5 class="modal-title" id="editEventoModalLabel">
+                Editar Evento
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
             <div class="modal-body">
-              <input type="hidden" id="edit-evento-id">
-              <div class="form-group">
+              <input type="hidden" id="edit-evento-id" />
+              <div class="form-group mb-3">
                 <label for="edit-evento-nombre">Nombre</label>
-                <input type="text" class="form-control" id="edit-evento-nombre" required>
+                <input
+                  type="text"
+                  class="form-control bg-dark text-white"
+                  id="edit-evento-nombre"
+                  required
+                />
               </div>
-              <div class="form-group">
+              <div class="form-group mb-3">
                 <label for="edit-evento-fecha">Fecha</label>
-                <input type="date" class="form-control" id="edit-evento-fecha" required>
+                <input
+                  type="date"
+                  class="form-control bg-dark text-white"
+                  id="edit-evento-fecha"
+                  required
+                />
               </div>
-              <div class="form-group">
+              <div class="form-group mb-3">
                 <label for="edit-evento-hora">Hora</label>
-                <input type="time" class="form-control" id="edit-evento-hora" required>
+                <input
+                  type="time"
+                  class="form-control bg-dark text-white"
+                  id="edit-evento-hora"
+                  required
+                />
               </div>
-              <div class="form-group">
+              <div class="form-group mb-3">
                 <label for="edit-evento-lugar">Lugar</label>
-                <input type="text" class="form-control" id="edit-evento-lugar" required>
+                <input
+                  type="text"
+                  class="form-control bg-dark text-white"
+                  id="edit-evento-lugar"
+                  required
+                />
               </div>
-              <div class="form-group">
+              <div class="form-group mb-3">
                 <label for="edit-evento-descripcion">Descripción</label>
-                <textarea class="form-control" id="edit-evento-descripcion" required></textarea>
+                <textarea
+                  class="form-control bg-dark text-white"
+                  id="edit-evento-descripcion"
+                  required
+                ></textarea>
               </div>
-              <div class="form-group">
+              <div class="form-group mb-3">
                 <label for="edit-evento-imagen">Imagen</label>
-                <input type="text" class="form-control" id="edit-evento-imagen" required>
+                <input
+                  type="text"
+                  class="form-control bg-dark text-white"
+                  id="edit-evento-imagen"
+                  required
+                />
               </div>
-              <div class="form-group">
+              <div class="form-group mb-3">
                 <label for="edit-evento-organizador">Organizador</label>
-                <input type="text" class="form-control" id="edit-evento-organizador" required>
+                <input
+                  type="text"
+                  class="form-control bg-dark text-white"
+                  id="edit-evento-organizador"
+                  required
+                />
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Guardar Cambios
+              </button>
             </div>
           </form>
         </div>
       </div>
     </div>
     <!-- Edit Evento Modal -->
+
+    <!-- Edit Participante Modal -->
+    <div
+      class="modal fade"
+      id="editParticipanteModal"
+      tabindex="-1"
+      aria-labelledby="editParticipanteModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+          <form id="edit-participante-form">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editParticipanteModalLabel">
+                Editar Participante
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="edit-participante-id" />
+              <div class="form-group mb-3">
+                <label for="edit-participante-nombre">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control bg-dark text-white"
+                  id="edit-participante-nombre"
+                  required
+                />
+              </div>
+              <div class="form-group mb-3">
+                <label for="edit-participante-correo">Correo Electrónico</label>
+                <input
+                  type="email"
+                  class="form-control bg-dark text-white"
+                  id="edit-participante-correo"
+                  required
+                />
+              </div>
+              <div class="form-group mb-3">
+                <label for="edit-participante-fecha"
+                  >Fecha de Inscripción</label
+                >
+                <input
+                  type="date"
+                  class="form-control bg-dark text-white"
+                  id="edit-participante-fecha"
+                  required
+                />
+              </div>
+              <div class="form-group mb-3">
+                <label for="edit-participante-acompanantes"
+                  >Número de Acompañantes</label
+                >
+                <input
+                  type="number"
+                  class="form-control bg-dark text-white"
+                  id="edit-participante-acompanantes"
+                  required
+                />
+              </div>
+              <div class="form-group mb-3">
+                <label for="edit-participante-evento">Evento</label>
+                <input
+                  class="form-control bg-dark text-white"
+                  id="edit-participante-evento"
+                  required
+                  disabled
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Guardar Cambios
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Edit Participante Modal -->
 
     <!-- ADDITIONAL SCRIPTS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

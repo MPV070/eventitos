@@ -37,16 +37,19 @@ async function fetchData(type) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const contentType = response.headers.get('Content-Type');
-    if (contentType && contentType.includes('application/json')) {
+    const contentType = response.headers.get("Content-Type");
+    if (contentType && contentType.includes("application/json")) {
       return await response.json();
     } else {
       const text = await response.text();
-      console.error('Unexpected content type, expecting JSON. Content received: ', text);
+      console.error(
+        "Unexpected content type, expecting JSON. Content received: ",
+        text
+      );
       throw new Error(`Unexpected content type: ${contentType}`);
     }
   } catch (error) {
-    console.error('Fetch or JSON parsing error:', error);
+    console.error("Fetch or JSON parsing error:", error);
     throw error;
   }
 }
@@ -70,26 +73,29 @@ async function displayData() {
         <td>${evento.lugar}</td>
         <td>${evento.organizador}</td>
         <td>
-          <button class="btn btn-danger btn-sm" onclick="removeEvento(${evento.id})">Eliminar</button>
-          <button class="btn btn-warning btn-sm" onclick="editEvento(${evento.id})">Editar</button>
+          <div class="dropdown ms-auto">
+            <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+            <ul class="dropdown-menu">
+              <li>
+                <span class="dropdown-item" onclick="editEvento(${evento.id})">
+                  <i class="fas fa-pen mx-2"></i> Editar
+                </span>
+              </li>
+              <li>
+                <span class="dropdown-item" onclick="removeEvento(${evento.id})">
+                  <i class="fas fa-trash mx-2"></i> Eliminar
+                </span>
+              </li>
+              <li>
+                <span class="dropdown-item" onclick="showParticipanteForm('${evento.id}', this)">
+                  <i class="fas fa-user-plus mx-2"></i> Añadir Participante
+                </span>
+              </li>
+            </ul>
+          </div>
         </td>
       `;
       eventosTableBody.appendChild(row);
-    });
-
-    const eventosNombresTableBody = document.getElementById("eventos-nombres-table-body");
-    eventosNombresTableBody.innerHTML = ""; // Clear existing rows
-    eventos.forEach((evento) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td onclick="showParticipanteForm('${evento.id}', this)">${evento.nombre}</td>
-        <td>${evento.fecha}</td>
-        <td>${evento.hora}</td>
-        <td>${evento.lugar}</td>
-        <td>${evento.descripcion}</td>
-        <td><img src="${evento.imagen}" alt="${evento.nombre}" width="100"></td>
-      `;
-      eventosNombresTableBody.appendChild(row);
     });
 
     const participantesTableBody = document.getElementById(
@@ -105,13 +111,27 @@ async function displayData() {
         <td>${participante.fechaInscripcion}</td>
         <td>${participante.eventoNombre}</td>
         <td>
-          <button class="btn btn-danger btn-sm" onclick="removeParticipante(${participante.id})">Eliminar</button>
+          <div class="dropdown ms-auto">
+            <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+            <ul class="dropdown-menu">
+              <li>
+                <span class="dropdown-item" onclick="editParticipante(${participante.id})">
+                  <i class="fas fa-pen mx-2"></i> Editar
+                </span>
+              </li>
+              <li>
+                <span class="dropdown-item" onclick="removeParticipante(${participante.id})">
+                  <i class="fas fa-trash mx-2"></i> Eliminar
+                </span>
+              </li>
+            </ul>
+          </div>
         </td>
       `;
       participantesTableBody.appendChild(row);
     });
   } catch (error) {
-    console.error('Error displaying data:', error);
+    console.error("Error displaying data:", error);
   }
 }
 
@@ -165,14 +185,24 @@ async function addEvento() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result = await response.json();
-        if (result.status === "success") {
-          displayData();
-          populateEventosDropdown(); // Reset and update the event selector
-          resetEventoForm(); // Reset the form
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          const result = await response.json();
+          if (result.status === "success") {
+            displayData();
+            populateEventosDropdown(); // Reset and update the event selector
+            resetEventoForm(); // Reset the form
+          }
+        } else {
+          const text = await response.text();
+          console.error(
+            "Unexpected content type, expecting JSON. Content received: ",
+            text
+          );
+          throw new Error(`Unexpected content type: ${contentType}`);
         }
       } catch (error) {
-        console.error('Error adding event:', error);
+        console.error("Error adding event:", error);
       }
     }
   );
@@ -202,12 +232,22 @@ async function removeEvento(eventoId) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result = await response.json();
-        if (result.status === "success") {
-          displayData();
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          const result = await response.json();
+          if (result.status === "success") {
+            displayData();
+          }
+        } else {
+          const text = await response.text();
+          console.error(
+            "Unexpected content type, expecting JSON. Content received: ",
+            text
+          );
+          throw new Error(`Unexpected content type: ${contentType}`);
         }
       } catch (error) {
-        console.error('Error removing event:', error);
+        console.error("Error removing event:", error);
       }
     }
   );
@@ -227,7 +267,10 @@ async function removeParticipante(participanteId) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ type: "removeParticipante", id: participanteId }),
+          body: JSON.stringify({
+            type: "removeParticipante",
+            id: participanteId,
+          }),
         });
 
         if (!response.ok) {
@@ -237,12 +280,22 @@ async function removeParticipante(participanteId) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result = await response.json();
-        if (result.status === "success") {
-          displayData();
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          const result = await response.json();
+          if (result.status === "success") {
+            displayData();
+          }
+        } else {
+          const text = await response.text();
+          console.error(
+            "Unexpected content type, expecting JSON. Content received: ",
+            text
+          );
+          throw new Error(`Unexpected content type: ${contentType}`);
         }
       } catch (error) {
-        console.error('Error removing participant:', error);
+        console.error("Error removing participant:", error);
       }
     }
   );
@@ -260,7 +313,7 @@ function openEditModal(evento) {
   document.getElementById("edit-evento-descripcion").value = evento.descripcion;
   document.getElementById("edit-evento-imagen").value = evento.imagen;
   document.getElementById("edit-evento-organizador").value = evento.organizador;
-  new bootstrap.Modal(document.getElementById('editEventoModal')).show();
+  new bootstrap.Modal(document.getElementById("editEventoModal")).show();
 }
 
 // Function to handle the form submission for editing an event
@@ -274,8 +327,16 @@ async function handleEditEventoForm(event) {
   const descripcion = document.getElementById("edit-evento-descripcion").value;
   const imagen = document.getElementById("edit-evento-imagen").value;
   const organizador = document.getElementById("edit-evento-organizador").value;
-
-  const updatedEvento = new Evento(nombre, descripcion, imagen, fecha, hora, lugar, organizador);
+  debugger;
+  const updatedEvento = new Evento(
+    nombre,
+    descripcion,
+    imagen,
+    fecha,
+    hora,
+    lugar,
+    organizador
+  );
 
   try {
     const response = await fetch("./php/main.php", {
@@ -283,7 +344,11 @@ async function handleEditEventoForm(event) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ type: "updateEvento", id, ...updatedEvento }),
+      body: JSON.stringify({
+        type: "updateEvento",
+        ...updatedEvento,
+        id: parseInt(id, 10),
+      }),
     });
 
     if (!response.ok) {
@@ -293,33 +358,47 @@ async function handleEditEventoForm(event) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const result = await response.json();
-    if (result.status === "success") {
-      const modalElement = document.getElementById('editEventoModal');
-      const modalInstance = bootstrap.Modal.getInstance(modalElement);
-      modalInstance.hide();
-      displayData();
-      populateEventosDropdown();
+    const contentType = response.headers.get("Content-Type");
+    if (contentType && contentType.includes("application/json")) {
+      const result = await response.json();
+      if (result.status === "success") {
+        const modalElement = document.getElementById("editEventoModal");
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        modalInstance.hide();
+        displayData();
+        populateEventosDropdown();
+      }
+    } else {
+      const text = await response.text();
+      console.error(
+        "Unexpected content type, expecting JSON. Content received: ",
+        text
+      );
+      throw new Error(`Unexpected content type: ${contentType}`);
     }
   } catch (error) {
-    console.error('Error updating event:', error);
+    console.error("Error updating event:", error);
   }
 }
 
 // Attach the handleEditEventoForm function to the form submission
-document.getElementById("edit-evento-form").addEventListener("submit", handleEditEventoForm);
+document
+  .getElementById("edit-evento-form")
+  .addEventListener("submit", handleEditEventoForm);
 
 // Function to edit an Evento
 async function editEvento(eventoId) {
   try {
     const eventos = await fetchData("eventos");
-    const evento = eventos.find(e => parseInt(e.id, 10) === parseInt(eventoId, 10));
+    const evento = eventos.find(
+      (e) => parseInt(e.id, 10) === parseInt(eventoId, 10)
+    );
 
     if (evento) {
       openEditModal(evento);
     }
   } catch (error) {
-    console.error('Error fetching event for editing:', error);
+    console.error("Error fetching event for editing:", error);
   }
 }
 
@@ -341,7 +420,7 @@ async function populateEventosDropdown() {
       eventoSelect.appendChild(option);
     });
   } catch (error) {
-    console.error('Error populating eventos dropdown:', error);
+    console.error("Error populating eventos dropdown:", error);
   }
 }
 
@@ -400,14 +479,24 @@ async function addParticipante() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result = await response.json();
-        console.log(result);
-        if (result.status === "success") {
-          displayData();
-          resetParticipanteForm(); // Reset the form
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+          const result = await response.json();
+          console.log(result);
+          if (result.status === "success") {
+            displayData();
+            resetParticipanteForm(); // Reset the form
+          }
+        } else {
+          const text = await response.text();
+          console.error(
+            "Unexpected content type, expecting JSON. Content received: ",
+            text
+          );
+          throw new Error(`Unexpected content type: ${contentType}`);
         }
       } catch (error) {
-        console.error('Error adding participant:', error);
+        console.error("Error adding participant:", error);
       }
     }
   );
@@ -417,25 +506,18 @@ window.addParticipante = addParticipante;
 
 // Function to show the "Añadir Participante" form
 function showParticipanteForm(eventoId, element) {
-  document.getElementById("participante-form-container").classList.remove("d-none");
-  document.getElementById("participante-evento").value = eventoId;
-
-  // Change the clicked event name to bold and blue
-  const eventRows = document.querySelectorAll("#eventos-nombres-table-body td");
-  eventRows.forEach((row) => {
-    row.style.fontWeight = "normal";
-    row.style.color = "inherit";
-  });
-  element.style.fontWeight = "bold";
-  element.style.color = "blue";
+  document.getElementById("add-participante-evento").value = eventoId;
+  new bootstrap.Modal(document.getElementById("addParticipanteModal")).show();
 }
 
 window.showParticipanteForm = showParticipanteForm;
 
 // Function to filter events by name
 function filterEventos() {
-  const filter = document.getElementById("search-evento-nombre").value.toLowerCase();
-  const rows = document.querySelectorAll("#eventos-nombres-table-body tr");
+  const filter = document
+    .getElementById("search-evento-nombre")
+    .value.toLowerCase();
+  const rows = document.querySelectorAll("#eventos-table-body tr");
   rows.forEach((row) => {
     const nombre = row.querySelector("td").textContent.toLowerCase();
     if (nombre.includes(filter)) {
@@ -452,7 +534,7 @@ window.filterEventos = filterEventos;
 document.addEventListener("DOMContentLoaded", () => {
   displayData();
   populateEventosDropdown();
-  showSection('formulario'); // Show the formulario section by default
+  showSection("formulario"); // Show the formulario section by default
 });
 
 function validateEventoForm() {
@@ -462,7 +544,8 @@ function validateEventoForm() {
   const lugar = document.getElementById("evento-lugar").value;
   const descripcion = document.getElementById("evento-descripcion").value;
   const fechaValida = new Date(fecha) > new Date();
-  const isValid = nombre && fecha && hora && lugar && descripcion && fechaValida;
+  const isValid =
+    nombre && fecha && hora && lugar && descripcion && fechaValida;
   document.querySelector("#evento-form button").disabled = !isValid;
 
   const fechaHelp = document.getElementById("fechaHelp");
@@ -508,3 +591,109 @@ document.querySelectorAll("#participante-form input").forEach((input) => {
 // Initial validation
 validateEventoForm();
 validateParticipanteForm();
+
+// Function to open the edit modal with current participant data
+function openEditParticipanteModal(participante) {
+  document.getElementById("edit-participante-id").value = participante.id;
+  document.getElementById("edit-participante-nombre").value =
+    participante.nombre;
+  document.getElementById("edit-participante-correo").value =
+    participante.correoElectronico;
+  document.getElementById("edit-participante-fecha").value =
+    participante.fechaInscripcion;
+  document.getElementById("edit-participante-acompanantes").value =
+    participante.numAcompanantes;
+  document.getElementById("edit-participante-evento").value =
+    participante.eventoId;
+  new bootstrap.Modal(document.getElementById("editParticipanteModal")).show();
+}
+
+// Function to handle the form submission for editing a participant
+async function handleEditParticipanteForm(event) {
+  event.preventDefault();
+  const id = document.getElementById("edit-participante-id").value;
+  const nombre = document.getElementById("edit-participante-nombre").value;
+  const correoElectronico = document.getElementById(
+    "edit-participante-correo"
+  ).value;
+  const fechaInscripcion = document.getElementById(
+    "edit-participante-fecha"
+  ).value;
+  const numAcompanantes = document.getElementById(
+    "edit-participante-acompanantes"
+  ).value;
+  const eventoId = document.getElementById("edit-participante-evento").value;
+
+  const updatedParticipante = new Participante(
+    nombre,
+    correoElectronico,
+    eventoId,
+    numAcompanantes,
+    "0",
+    fechaInscripcion
+  );
+
+  try {
+    const response = await fetch("./php/main.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        type: "updateParticipante",
+        ...updatedParticipante,
+        id: parseInt(id, 10),
+      }),
+    });
+
+    if (!response.ok) {
+      console.error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error("Error text: ", errorText);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const contentType = response.headers.get("Content-Type");
+    if (contentType && contentType.includes("application/json")) {
+      const result = await response.json();
+      if (result.status === "success") {
+        const modalElement = document.getElementById("editParticipanteModal");
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        modalInstance.hide();
+        displayData();
+      }
+    } else {
+      const text = await response.text();
+      console.error(
+        "Unexpected content type, expecting JSON. Content received: ",
+        text
+      );
+      throw new Error(`Unexpected content type: ${contentType}`);
+    }
+  } catch (error) {
+    console.error("Error updating participant:", error);
+  }
+}
+
+// Attach the handleEditParticipanteForm function to the form submission
+document
+  .getElementById("edit-participante-form")
+  .addEventListener("submit", handleEditParticipanteForm);
+
+// Function to edit a Participante
+async function editParticipante(participanteId) {
+  try {
+    const participantes = await fetchData("participantes");
+    const participante = participantes.find(
+      (p) => parseInt(p.id, 10) === parseInt(participanteId, 10)
+    );
+
+    if (participante) {
+      openEditParticipanteModal(participante);
+    }
+  } catch (error) {
+    console.error("Error fetching participant for editing:", error);
+  }
+}
+
+window.editParticipante = editParticipante;

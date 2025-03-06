@@ -77,7 +77,8 @@ if ($method == 'GET') {
         if (mysqli_query($conn, $query)) {
             echo json_encode(['status' => 'success', 'message' => 'Evento actualizado']);
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Error al actualizar el evento', 'error' => mysqli_error($conn)]);
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Error al actualizar el evento', 'error' => mysqli_error($conn), 'data' => $data]);
         }
     } elseif ($data['type'] == 'removeEvento') {
         $eventoId = $data['id'];
@@ -111,6 +112,21 @@ if ($method == 'GET') {
             }
         } else {
             echo json_encode(['status' => 'error', 'message' => 'El evento no existe', 'query' => $checkEventQuery]);
+        }
+    } elseif ($data['type'] == 'updateParticipante') {
+        $participanteId = $data['id'];
+        $nombre = $data['nombre'];
+        $correoElectronico = $data['correoElectronico'];
+        $eventoId = $data['eventoId'];
+        $numAcompanantes = $data['numAcompanantes'];
+        $fechaInscripcion = $data['fechaInscripcion'];
+
+        $query = "UPDATE participants SET participant_name='$nombre', participant_email='$correoElectronico', event_id='$eventoId', num_companions='$numAcompanantes', registration_date='$fechaInscripcion' WHERE participant_id = $participanteId";
+        if (mysqli_query($conn, $query)) {
+            echo json_encode(['status' => 'success', 'message' => 'Participante actualizado']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Error al actualizar el participante', 'error' => mysqli_error($conn), 'data' => $data]);
         }
     } elseif ($data['type'] == 'removeParticipante') {
         $participanteId = $data['id'];
