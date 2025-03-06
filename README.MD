@@ -1,6 +1,6 @@
 Enlace a GitHub:https://github.com/MPV070/eventitos/tree/main
 
-Enlace al alojamiento web:
+Enlace al alojamiento web: https://eventitos-production.up.railway.app/#
 
 Datos para la conexión a la base de datos:
 nombre de la base de datos: bdeventos
